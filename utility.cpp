@@ -46,7 +46,7 @@ namespace xx {
 
 
 
-xx::Triangle xx::Make_random_Triangle() {
+xx::Triangle xx::Make_random_triangle() {
   xx::Triangle t; 
   t.a.x = xx::the_random();
   t.a.y = xx::the_random();
@@ -57,3 +57,34 @@ xx::Triangle xx::Make_random_Triangle() {
   return t;
 }
 
+void xx::Move_triangle( xx::Triangle& _t, const glm::vec2& _vec ) {
+  _t.a += _vec;
+  _t.b += _vec;
+  _t.c += _vec;
+}
+
+
+
+xx::X xx::Make_x() {
+  xx::X x;
+  x.a.x = -0.5;
+  x.a.y = -0.5;
+  x.b.x = 0.5;
+  x.b.y = 0.5;
+  x.c.x = -0.5;
+  x.c.y = 0.5;
+  x.d.x = 0.5;
+  x.d.y = -0.5;
+  x.a /= 10.0f ;
+  x.b /= 10.0f ;
+  x.c /= 10.0f ;
+  x.d /= 10.0f ;  
+  return x;
+}
+
+void xx::Move_x( xx::X& _x, const glm::vec2& _vec ) {
+  _x.a += _vec;
+  _x.b += _vec;
+  _x.c += _vec;
+  _x.d += _vec;
+}

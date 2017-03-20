@@ -1,4 +1,8 @@
 
+/*  To Compile Use:
+ *    g++ -std=c++11 -o test.bin  *.cpp  -lglut -lGLU -lGL
+ */
+
 #include "Game.h"
 #include <iostream>
 

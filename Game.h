@@ -22,6 +22,7 @@ namespace GAME {
     void Draw();
 
     std::vector< xx::Triangle > m_triangles;
+    std::vector< xx::X > m_x;
   } extern the_game;
 }//GAME
 

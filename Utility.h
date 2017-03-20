@@ -37,7 +37,22 @@ namespace xx {
 
 
 namespace xx {
-  xx::Triangle Make_random_Triangle();
+  struct X {
+    glm::vec2 a;
+    glm::vec2 b;
+    glm::vec2 c;
+    glm::vec2 d;
+  };
+}//xx
+
+
+
+namespace xx {
+  xx::Triangle Make_random_triangle();
+  void Move_triangle( xx::Triangle& _t, const glm::vec2& _vec );
+
+  xx::X Make_x();
+  void Move_x( xx::X& _x, const glm::vec2& _vec );
 }//xx
 
 
