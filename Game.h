@@ -17,14 +17,20 @@ namespace GAME {
 
 
 namespace GAME {
-  struct Display {
+  class Display {
+    friend void GAME::On_display_resize( int _new_width, int _new_height );
+  public:
     Display();
+    glm::vec2 Get_pixels();
+    glm::vec2 Get_size();
+    glm::vec2 Get_ratio();
     
+    xx::Tiles m_tiles;
+  private:
     glm::vec2 m_pixels_original;
     glm::vec2 m_pixels;
     glm::vec2 m_size;
     glm::vec2 m_ratio;
-    xx::Tiles m_tiles;
   } extern the_display;
 }//GAME
 

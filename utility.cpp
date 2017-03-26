@@ -51,12 +51,12 @@ xx::Tiles::Make_tiles( int _row, int _col ) {
   for( int i = 1 ; i < m_rows ; ++i ) {	
     for( int j = 1 ; j <= m_cols ; ++j ) {
       m_tiles.push_back({ col_begin + ( m_col_size * j ),
-	    row_begin + ( m_row_size * i ) });
+	                  row_begin + ( m_row_size * i ) });
     }//for
     ++i;
     for( int j = m_cols ; j >= 1 ; --j ) {
       m_tiles.push_back({ col_begin + ( m_col_size * j ),
-	    row_begin + ( m_row_size * i ) });
+	                  row_begin + ( m_row_size * i ) });
     }//for
   }//for
 }
@@ -101,4 +101,5 @@ xx::Move_triangle( xx::Triangle& _t, const glm::vec2& _vec ) {
   _t.a += _vec;
   _t.b += _vec;
   _t.c += _vec;
+  _t.pos += _vec;
 }

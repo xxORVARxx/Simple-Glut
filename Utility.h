@@ -48,6 +48,7 @@ namespace xx {
     glm::vec2 a;
     glm::vec2 b;
     glm::vec2 c;
+    glm::vec2 pos;
   };
 }//xx
 

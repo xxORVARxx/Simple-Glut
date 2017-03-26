@@ -7,6 +7,7 @@
 
 // Function Pointer:
 void(*the_initialize_func_ptr)() = nullptr;
+void(*the_display_resize_func_ptr)(int,int) = nullptr;
 void(*the_loop_func_ptr)() = nullptr;
 
 
@@ -18,8 +19,8 @@ ENGINE::Set_the_initialize_function( void(*_func_ptr)() ) {
 
 void
 ENGINE::Set_the_display_resize_function( void(*_func_ptr)(int,int) ) {
-  /*ASSERT*/assert( _func_ptr != nullptr );
-  glutReshapeFunc( _func_ptr );
+  the_display_resize_func_ptr = _func_ptr;
+  glutReshapeFunc( &ENGINE::On_display_resize );
 }
 
 void
@@ -38,6 +39,13 @@ ENGINE::Initialize( int* _argc, char** _argv ) {
   glutCreateWindow( "Glut" );
   glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
   glutDisplayFunc( ENGINE::Loop );
+}
+
+void
+ENGINE::On_display_resize( int _new_width, int _new_height ) {
+  /*ASSERT*/assert( the_display_resize_func_ptr != nullptr );
+  the_display_resize_func_ptr( _new_width, _new_height );
+  glViewport( 0, 0, _new_width, _new_height );
 }
 
 void

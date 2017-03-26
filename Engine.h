@@ -13,6 +13,7 @@ namespace ENGINE {
   void Set_the_loop_function( void(*_func_ptr)() );
 
   void Initialize( int* _argc, char** _argv );
+  void On_display_resize( int _new_width, int _new_height );
   void Loop();
   void Start();
 }//ENGINE

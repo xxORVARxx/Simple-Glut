@@ -24,7 +24,6 @@ GAME::Initialize() {
 
 void
 GAME::On_display_resize( int _new_width, int _new_height ) {
-  glViewport( 0, 0, _new_width, _new_height );
   std::cout <<"Display Resized To: "<< _new_width <<'x'<< _new_height <<".\n";
   if( GAME::the_display.m_pixels_original.x < 0.0f )
     GAME::the_display.m_pixels_original.x = _new_width;
@@ -34,10 +33,10 @@ GAME::On_display_resize( int _new_width, int _new_height ) {
   GAME::the_display.m_pixels.y = _new_height;
   if( GAME::the_display.m_pixels.x > GAME::the_display.m_pixels.y )
     GAME::the_display.m_ratio.x = ( GAME::the_display.m_pixels.y /
-					GAME::the_display.m_pixels.x );
+				    GAME::the_display.m_pixels.x );
   else
     GAME::the_display.m_ratio.y= ( GAME::the_display.m_pixels.x /
-					 GAME::the_display.m_pixels.y );
+				   GAME::the_display.m_pixels.y );
 }
 
 void
@@ -55,6 +54,21 @@ GAME::Display::Display() :
   m_ratio( 1.0f, 1.0f ) {
 }
 
+glm::vec2
+GAME::Display::Get_pixels() {
+  return m_pixels;
+}
+
+glm::vec2
+GAME::Display::Get_size() {
+  return m_size;
+}
+
+glm::vec2
+GAME::Display::Get_ratio() {
+  return m_ratio;
+}
+
 
 
 void
@@ -62,17 +76,8 @@ GAME::Game::Logic() {
 
 }
 
-
 void
-Draw_triangle( xx::Triangle& _t, glm::vec2 _scale,  glm::vec2 _move ) {
-  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
-}
-
+Draw_triangle( xx::Triangle& _t, glm::vec2 _scale,  glm::vec2 _move );
 
 void
 GAME::Game::Draw() {
@@ -94,10 +99,21 @@ GAME::Game::Draw() {
   glColor3f( 1.0f, 1.0f, 1.0f );
   for( unsigned int i = 0 ; i < m_triangles.size() ; ++i ) {
     Draw_triangle( m_triangles[i],
-		   GAME::the_display.m_ratio,
-		   GAME::the_display.m_tiles[i] * GAME::the_display.m_ratio );
+		   GAME::the_display.Get_ratio(),
+		   GAME::the_display.m_tiles[i] * GAME::the_display.Get_ratio());
   }
   
   glEnd();
 }
 
+
+
+void
+Draw_triangle( xx::Triangle& _t, glm::vec2 _scale,  glm::vec2 _move ) {
+  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
+  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
+  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
+  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
+  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
+  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
+}
