@@ -1,43 +1,56 @@
 
 #include "Engine.h"
 #include <iostream>
+#include <assert.h>
 
 
 
-// Function Pointer To a Draw/Display Function To Be Used:
-void(*display_func_ptr)() = nullptr;
-void(*Initialize_func_ptr)() = nullptr;
+// Function Pointer:
+void(*the_initialize_func_ptr)() = nullptr;
+void(*the_loop_func_ptr)() = nullptr;
 
 
 
-void ENGINE::Set_display_function( void(*_func_ptr)() ) {
-  display_func_ptr = _func_ptr;
+void
+ENGINE::Set_the_initialize_function( void(*_func_ptr)() ) {
+  the_initialize_func_ptr = _func_ptr;
 }
 
-void ENGINE::Set_Initialize_function( void(*_func_ptr)() ) {
-  Initialize_func_ptr = _func_ptr;
+void
+ENGINE::Set_the_display_resize_function( void(*_func_ptr)(int,int) ) {
+  /*ASSERT*/assert( _func_ptr != nullptr );
+  glutReshapeFunc( _func_ptr );
+}
+
+void
+ENGINE::Set_the_loop_function( void(*_func_ptr)() ) {
+  the_loop_func_ptr = _func_ptr;
 }
 
 
 
-void ENGINE::Initialize( int* _argc, char** _argv ) {
+void
+ENGINE::Initialize( int* _argc, char** _argv ) {
   glutInit( _argc, _argv );
   glutInitDisplayMode( GLUT_DOUBLE );
-  glutInitWindowSize( 1080, 1080 );//( 1280, 720 )//( 1920, 1080 );
+  glutInitWindowSize( glutGet( GLUT_SCREEN_WIDTH ) / 2,
+		      glutGet( GLUT_SCREEN_HEIGHT ) / 2 );//( 1280, 720 )//( 1920, 1080 );
   glutCreateWindow( "Glut" );
   glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
-  glutDisplayFunc( ENGINE::Display );
+  glutDisplayFunc( ENGINE::Loop );
 }
 
-void ENGINE::Display() {
+void
+ENGINE::Loop() {
   glClear( GL_COLOR_BUFFER_BIT );
-  if( display_func_ptr != nullptr )
-    display_func_ptr();
+  /*ASSERT*/assert( the_loop_func_ptr != nullptr );
+  the_loop_func_ptr();
   glutSwapBuffers();
 }
 
-void ENGINE::Start() {
-  if( Initialize_func_ptr != nullptr )
-    Initialize_func_ptr();
+void
+ENGINE::Start() {
+  /*ASSERT*/assert( the_initialize_func_ptr != nullptr );
+  the_initialize_func_ptr();
   glutMainLoop();
 }
