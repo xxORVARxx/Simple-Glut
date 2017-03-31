@@ -42,7 +42,9 @@ namespace GAME {
     void Logic();
     void Draw();
 
-    std::vector< xx::Triangle > m_triangles;
+    xx::Triangle_model m_test_model;
+    
+    std::vector< xx::Triangle_geometric > m_triangles;
   } extern the_game;
 }//GAME
 
