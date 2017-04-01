@@ -8,6 +8,7 @@
 
 
 
+/*** *** *** FUNCTIONS *** *** ***/
 namespace GAME {
   void Initialize();
   void On_display_resize( int _new_width, int _new_height );
@@ -16,6 +17,7 @@ namespace GAME {
 
 
 
+/*** *** *** DISPLAY *** *** ***/
 namespace GAME {
   class Display {
     friend void GAME::On_display_resize( int _new_width, int _new_height );
@@ -25,7 +27,6 @@ namespace GAME {
     glm::vec2 Get_size();
     glm::vec2 Get_ratio();
     
-    xx::Tiles m_tiles;
   private:
     glm::vec2 m_pixels_original;
     glm::vec2 m_pixels;
@@ -36,15 +37,17 @@ namespace GAME {
 
 
 
+/*** *** *** GAME *** *** ***/
 namespace GAME {
   class Game {
   public:
     void Logic();
     void Draw();
 
-    xx::Triangle_model m_test_model;
-    
-    std::vector< xx::Triangle_geometric > m_triangles;
+    xx::Model m_triangle;
+
+    xx::Tiles m_tiles;
+    std::vector< xx::Model > m_triangles;
   } extern the_game;
 }//GAME
 

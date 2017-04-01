@@ -9,7 +9,7 @@
 #include <random>
 
 
-
+/*** *** *** RANDOM *** *** ***/
 namespace xx {
   class Random {
   public:
@@ -27,6 +27,7 @@ namespace xx {
 
 
 
+/*** *** *** GLM *** *** ***/
 std::ostream&
 operator<< ( std::ostream& _out, const glm::vec3& _source );
 
@@ -34,15 +35,28 @@ std::ostream&
 operator<< ( std::ostream& _out, const glm::mat3& _source );
 
 namespace xx {
+  glm::vec3
+  From2to3_0( glm::vec2 _v );
+  
+  glm::vec3
+  From2to3_1( glm::vec2 _v );
+  
   glm::mat3
   Translate( glm::vec3 const& _v, glm::mat3 const& _m = glm::mat3());
   
   glm::mat3
-  Scale( glm::vec3 const& _v, glm::mat3 const& _m = glm::mat3());  
+  Scale( glm::vec3 const& _v, glm::mat3 const& _m = glm::mat3());
+  
+  void
+  Set_translation( glm::vec3 const& _v, glm::mat3& _m );
+
+  void
+  Set_Scale( glm::vec3 const& _v, glm::mat3& _m );
 }//xx
 
 
 
+/*** *** *** TILES *** *** ***/
 namespace xx {
   class Tiles {
   public:
@@ -60,31 +74,15 @@ namespace xx {
 
 
 
+/*** *** *** MODEL *** *** ***/
 namespace xx {
-  struct Triangle_geometric {
-    friend std::ostream& operator<< ( std::ostream& _out, const xx::Triangle_geometric& _source );
+  class Model {
+  public:
+    glm::vec3 Get_position( unsigned int _at );
     
-    glm::vec3 a;
-    glm::vec3 b;
-    glm::vec3 c;
-    glm::vec3 pos;
+    std::vector< glm::mat3 > m_matrices;
+    std::vector< glm::vec3 > m_geometric;
   };
-}//xx
-
-
-
-namespace xx {
-  struct Triangle_model {
-    glm::mat3 m_matrix;
-    xx::Triangle_geometric m_geometric;
-  };
-}//xx
-
-
-
-namespace xx {
-  xx::Triangle_geometric Make_random_triangle_geometric();
-  void Move_triangle_geometric( xx::Triangle_geometric& _t, const glm::vec3& _vec );
 }//xx
 
 

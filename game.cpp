@@ -11,18 +11,28 @@ namespace GAME {
 
 
 
+/*** *** *** FUNCTIONS *** *** ***/
 void
 GAME::Initialize() {
   unsigned int num = 10 ;
-  xx::the_random.Set_distribution( -1.0d / 10.0d, 1.0d / 10.0d );
-  GAME::the_display.m_tiles.Make_tiles( 10, 10 );
-  GAME::the_game.m_triangles.reserve( GAME::the_display.m_tiles.Size());
-  for( unsigned int i = 0 ; i < num * num ; ++i ) {
-    GAME::the_game.m_triangles.push_back( xx::Make_random_triangle_geometric());  
+  // Make Models:
+  GAME::the_game.m_triangles.reserve(( num * num ) + 1 );
+  for( unsigned int i = 0 ; i < num * num ; ++i )
+    GAME::the_game.m_triangles.push_back( xx::Model());
+  // Give The Models Some Geometric:
+  xx::the_random.Set_distribution( -1.0d, 1.0d );
+  for( unsigned int i = 0 ; i < GAME::the_game.m_triangles.size() ; ++i ) {
+    GAME::the_game.m_triangles[i].m_geometric.push_back({ xx::the_random(), xx::the_random(), 1.0f });
+    GAME::the_game.m_triangles[i].m_geometric.push_back({ xx::the_random(), xx::the_random(), 1.0f });
+    GAME::the_game.m_triangles[i].m_geometric.push_back({ xx::the_random(), xx::the_random(), 1.0f });
   }//for
-
-  GAME::the_game.m_test_model.m_geometric = GAME::the_game.m_triangles[0];
-  GAME::the_game.m_test_model.m_matrix = xx::Translate({ 0.5f, 0.5f, 0.0f }, xx::Scale({ 5.0f, 5.0f, 0.0f }));
+  // Make Tiles To Organize The Models On The Screen:
+  GAME::the_game.m_tiles.Make_tiles( num, num );
+  for( unsigned int i = 0 ; i < GAME::the_game.m_triangles.size() ; ++i ) {
+    glm::mat3 m = xx::Scale({ 1.0f / num, 1.0f / num, 1.0f }); // Scale Model.
+    m = xx::Translate( GAME::the_game.m_tiles[i], m ); // Move Model.
+    GAME::the_game.m_triangles[i].m_matrices.push_back( m );  
+  }//for
 }
 
 void
@@ -50,6 +60,7 @@ GAME::Loop() {
 
 
 
+/*** *** *** DISPLAY *** *** ***/
 GAME::Display::Display() :
   m_pixels_original( -1.0f, -1.0f ),
   m_pixels( 0.0f, 0.0f ),
@@ -74,15 +85,13 @@ GAME::Display::Get_ratio() {
 
 
 
+/*** *** *** GAME *** *** ***/
 void
 GAME::Game::Logic() {
 }
 
 void
-Draw_triangle( xx::Triangle_geometric& _t, glm::vec2 _scale,  glm::vec2 _move );
-
-void
-Draw_triangle( xx::Triangle_model& _model );
+Draw_model( xx::Model& _model, glm::mat3 _display );
 
 void
 GAME::Game::Draw() {
@@ -99,46 +108,45 @@ GAME::Game::Draw() {
     glColor3f( 0.0f, 0.0f, 1.0f );
     glVertex2f( -1.0f, -1.0f );
     glVertex2f( 0.0f, 0.0f );
-  }
+  } 
 
-  
-  glColor3f( 1.0f, 0.0f, 0.0f );
-  Draw_triangle( GAME::the_game.m_test_model );
-  
-  
-  glColor3f( 1.0f, 1.0f, 1.0f );
-  for( unsigned int i = 0 ; i < m_triangles.size() ; ++i ) {
-    Draw_triangle( m_triangles[i],
-		   GAME::the_display.Get_ratio(),
-		   GAME::the_display.Get_ratio() * glm::vec2( GAME::the_display.m_tiles[i] ));
-  }
-  
+  glColor3f( 1.0f, 0.0f, 1.0f );
+  glm::mat3 display_mat = xx::Scale( xx::From2to3_1( GAME::the_display.Get_ratio()));
+  for( unsigned int i = 0 ; i < GAME::the_game.m_triangles.size() ; ++i )
+    Draw_model( GAME::the_game.m_triangles[i], display_mat );
+
   glEnd();
 }
 
-
-
 void
-Draw_triangle( xx::Triangle_geometric& _t, glm::vec2 _scale,  glm::vec2 _move ) {
-  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.b.x * _scale.x ) + _move.x ), (( _t.b.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.c.x * _scale.x ) + _move.x ), (( _t.c.y * _scale.y ) + _move.y ));
-  glVertex2f((( _t.a.x * _scale.x ) + _move.x ), (( _t.a.y * _scale.y ) + _move.y ));
-}
+Draw_model( xx::Model& _model, glm::mat3 _display ) {
+  if( _model.m_matrices.empty())
+    return;
+  if( _model.m_geometric.size() > 2 ) {
+    for( unsigned int i = 0 ; i < _model.m_matrices.size() ; ++i ) {
+      glm::vec3 v[3];
+      bool curr = 0;
+      v[curr] = _model.m_geometric[0] * _model.m_matrices[i] * _display;
+      v[2] = v[curr]; // Starting Point, (Saveing It).
+    
+      for( long int j = 0 ; j + 1 < _model.m_geometric.size() ; ++j ) {
+	curr = !curr; // Swamp Current Point.
+	v[curr] = _model.m_geometric[j+1] * _model.m_matrices[i] * _display;	
 
-
-
-void
-Draw_triangle( xx::Triangle_model& _model ) {
-  glm::vec3 a = _model.m_geometric.a * _model.m_matrix;
-  glm::vec3 b = _model.m_geometric.b * _model.m_matrix;
-  glm::vec3 c = _model.m_geometric.c * _model.m_matrix;
-  glVertex2f( a.x, a.y);
-  glVertex2f( b.x, b.y);
-  glVertex2f( b.x, b.y);
-  glVertex2f( c.x, c.y);
-  glVertex2f( c.x, c.y);
-  glVertex2f( a.x, a.y); 
+	glVertex2f( v[!curr].x, v[!curr].y );
+	glVertex2f( v[curr].x, v[curr].y );	
+      }//for
+      // Closing the loop:
+      glVertex2f( v[curr].x, v[curr].y );
+      glVertex2f( v[2].x, v[2].y ); // Starting Point.	
+    }//for
+  }
+  else if( _model.m_geometric.size() == 2 ) {
+    for( unsigned int i = 0 ; i < _model.m_matrices.size() ; ++i ) {
+      glm::vec3 v1 = _model.m_geometric[0] * _model.m_matrices[i] * _display;
+      glm::vec3 v2 = _model.m_geometric[1] * _model.m_matrices[i] * _display;
+      glVertex2f( v1.x, v1.y );
+      glVertex2f( v2.x, v2.y );
+    }//for
+  }
 }
